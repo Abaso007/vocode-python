@@ -90,8 +90,9 @@ class OutboundCall:
             .fetch(fields="line_type_intelligence")
             .line_type_intelligence
         )
-        if not line_type_intelligence or (
-            line_type_intelligence and line_type_intelligence["type"] != "mobile"
+        if (
+            not line_type_intelligence
+            or line_type_intelligence["type"] != "mobile"
         ):
             raise ValueError("Can only call mobile phones")
 

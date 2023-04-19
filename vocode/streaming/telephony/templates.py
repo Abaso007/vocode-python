@@ -6,7 +6,7 @@ from fastapi import Response
 class Templater:
     def __init__(self):
         self.templates = Environment(
-            loader=FileSystemLoader("%s/templates/" % os.path.dirname(__file__))
+            loader=FileSystemLoader(f"{os.path.dirname(__file__)}/templates/")
         )
 
     def render_template(self, template_name: str, **kwargs):

@@ -30,8 +30,6 @@ class TwilioOutputDevice(BaseOutputDevice):
         mark_message = {
             "event": "mark",
             "streamSid": self.stream_sid,
-            "mark": {
-                "name": "Sent {}".format(message_sent),
-            },
+            "mark": {"name": f"Sent {message_sent}"},
         }
         await self.ws.send_text(json.dumps(mark_message))

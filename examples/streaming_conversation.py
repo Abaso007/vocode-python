@@ -74,8 +74,7 @@ hella, down,     fire, totally, but like, slay, vibing, queen, go off, bet, sus,
     print("Conversation started, press Ctrl+C to end")
     signal.signal(signal.SIGINT, lambda _0, _1: conversation.terminate())
     while conversation.is_active():
-        chunk = microphone_input.get_audio()
-        if chunk:
+        if chunk := microphone_input.get_audio():
             conversation.receive_audio(chunk)
         await asyncio.sleep(0)
 

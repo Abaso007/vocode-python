@@ -39,10 +39,9 @@ class GoodbyeModel:
     def load_or_create_embeddings(self, path):
         if os.path.exists(path):
             return np.load(path)
-        else:
-            embeddings = self.create_embeddings()
-            np.save(path, embeddings)
-            return embeddings
+        embeddings = self.create_embeddings()
+        np.save(path, embeddings)
+        return embeddings
 
     def create_embeddings(self):
         print("Creating embeddings...")

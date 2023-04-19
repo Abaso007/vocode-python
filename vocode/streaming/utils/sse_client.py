@@ -129,11 +129,11 @@ class SSEClient(object):
     def __next__(self):
         while not self._event_complete():
             try:
-                next_chunk = next(self.resp_iterator)
-                if not next_chunk:
-                    raise EOFError()
-                self.buf += self.decoder.decode(next_chunk)
+                if next_chunk := next(self.resp_iterator):
+                    self.buf += self.decoder.decode(next_chunk)
 
+                else:
+                    raise EOFError()
             except (
                 StopIteration,
                 requests.RequestException,
@@ -184,16 +184,16 @@ class Event(object):
     def dump(self):
         lines = []
         if self.id:
-            lines.append("id: %s" % self.id)
+            lines.append(f"id: {self.id}")
 
         # Only include an event line if it's not the default already.
         if self.event != "message":
-            lines.append("event: %s" % self.event)
+            lines.append(f"event: {self.event}")
 
         if self.retry:
-            lines.append("retry: %s" % self.retry)
+            lines.append(f"retry: {self.retry}")
 
-        lines.extend("data: %s" % d for d in self.data.split("\n"))
+        lines.extend(f"data: {d}" for d in self.data.split("\n"))
         return "\n".join(lines) + "\n\n"
 
     @classmethod
@@ -207,7 +207,7 @@ class Event(object):
             m = cls.sse_line_pattern.match(line)
             if m is None:
                 # Malformed line.  Discard but warn.
-                warnings.warn('Invalid SSE line: "%s"' % line, SyntaxWarning)
+                warnings.warn(f'Invalid SSE line: "{line}"', SyntaxWarning)
                 continue
 
             name = m.group("name")
@@ -219,10 +219,7 @@ class Event(object):
             if name == "data":
                 # If we already have some data, then join to it with a newline.
                 # Else this is it.
-                if msg.data:
-                    msg.data = "%s\n%s" % (msg.data, value)
-                else:
-                    msg.data = value
+                msg.data = "%s\n%s" % (msg.data, value) if msg.data else value
             elif name == "event":
                 msg.event = value
             elif name == "id":

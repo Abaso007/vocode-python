@@ -42,7 +42,7 @@ class ElevenLabsSynthesizer(BaseSynthesizer):
         chunk_size: int,
         bot_sentiment: Optional[BotSentiment] = None,
     ) -> SynthesisResult:
-        url = ELEVEN_LABS_BASE_URL + f"text-to-speech/{self.voice_id}"
+        url = f"{ELEVEN_LABS_BASE_URL}text-to-speech/{self.voice_id}"
         headers = {"xi-api-key": self.api_key, "voice_id": self.voice_id}
         body = {"text": message.text}
 

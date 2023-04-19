@@ -77,12 +77,6 @@ class DeepgramTranscriber(BaseTranscriber):
             encoding = "linear16"
         elif self.transcriber_config.audio_encoding == AudioEncoding.MULAW:
             encoding = "mulaw"
-        url_params = {
-            "encoding": encoding,
-            "sample_rate": self.transcriber_config.sampling_rate,
-            "channels": 1,
-            "interim_results": "true",
-        }
         extra_params = {}
         if self.transcriber_config.language:
             extra_params["language"] = self.transcriber_config.language
@@ -100,7 +94,12 @@ class DeepgramTranscriber(BaseTranscriber):
             == EndpointingType.PUNCTUATION_BASED
         ):
             extra_params["punctuate"] = "true"
-        url_params.update(extra_params)
+        url_params = {
+            "encoding": encoding,
+            "sample_rate": self.transcriber_config.sampling_rate,
+            "channels": 1,
+            "interim_results": "true",
+        } | extra_params
         return f"wss://api.deepgram.com/v1/listen?{urlencode(url_params)}"
 
     def is_speech_final(
@@ -142,8 +141,7 @@ class DeepgramTranscriber(BaseTranscriber):
 
     def calculate_time_silent(self, data: dict):
         end = data["start"] + data["duration"]
-        words = data["channel"]["alternatives"][0]["words"]
-        if words:
+        if words := data["channel"]["alternatives"][0]["words"]:
             return end - words[-1]["end"]
         return data["duration"]
 
@@ -151,8 +149,8 @@ class DeepgramTranscriber(BaseTranscriber):
         extra_headers = {"Authorization": f"Token {self.api_key}"}
 
         async with websockets.connect(
-            self.get_deepgram_url(), extra_headers=extra_headers
-        ) as ws:
+                self.get_deepgram_url(), extra_headers=extra_headers
+            ) as ws:
 
             async def sender(ws: WebSocketClientProtocol):  # sends audio to websocket
                 while not self._ended:
@@ -173,9 +171,7 @@ class DeepgramTranscriber(BaseTranscriber):
                         self.logger.debug(f"Got error {e} in Deepgram receiver")
                         break
                     data = json.loads(msg)
-                    if (
-                        not "is_final" in data
-                    ):  # means we've finished receiving transcriptions
+                    if "is_final" not in data:  # means we've finished receiving transcriptions
                         break
                     is_final = data["is_final"]
                     speech_final = self.is_speech_final(buffer, data, time_silent)

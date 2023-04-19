@@ -147,7 +147,7 @@ class AzureSynthesizer(BaseSynthesizer):
         if search_result is None:
             return message
         start, end = search_result.span()
-        with_mark = message[:start] + f'<mark name="{index}" />' + message[start:end]
+        with_mark = f'{message[:start]}<mark name="{index}" />{message[start:end]}'
         rest = message[end:]
         rest_stripped = re.sub(r"^(.+)([\.\,\:\;\-\—]+)$", r"\1", rest)
         if len(rest_stripped) == 0:

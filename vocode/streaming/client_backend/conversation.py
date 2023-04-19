@@ -60,7 +60,7 @@ class ConversationRouter(BaseRouter):
         start_message: AudioConfigStartMessage = AudioConfigStartMessage.parse_obj(
             await websocket.receive_json()
         )
-        self.logger.debug(f"Conversation started")
+        self.logger.debug("Conversation started")
         output_device = WebsocketOutputDevice(
             websocket,
             start_message.output_audio_config.sampling_rate,

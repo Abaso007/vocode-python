@@ -4,9 +4,8 @@ import pydantic
 class BaseModel(pydantic.BaseModel):
     def __init__(self, **data):
         for key, value in data.items():
-            if isinstance(value, dict):
-                if "type" in value:
-                    data[key] = TypedModel.parse_obj(value)
+            if isinstance(value, dict) and "type" in value:
+                data[key] = TypedModel.parse_obj(value)
         super().__init__(**data)
 
 

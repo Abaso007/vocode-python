@@ -14,6 +14,5 @@ class RESTfulAgent(BaseAgent):
         raise NotImplementedError
 
     async def respond_rest(self, request: RESTfulAgentInput) -> Union[RESTfulAgentText, RESTfulAgentEnd]:
-        response = await self.respond(request.human_input, request.conversation_id)
-        return response
+        return await self.respond(request.human_input, request.conversation_id)
 

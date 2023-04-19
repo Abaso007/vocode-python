@@ -62,8 +62,7 @@ class RevAITranscriber(BaseTranscriber):
         }
 
         url_params_arr = [f'{key}={value}' for (key, value) in url_params_dict.items()]
-        url = f"wss://api.rev.ai/speechtotext/v1/stream?" + '&'.join(url_params_arr)
-        return url
+        return "wss://api.rev.ai/speechtotext/v1/stream?" + '&'.join(url_params_arr)
 
 
     async def run(self):

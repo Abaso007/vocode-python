@@ -32,7 +32,7 @@ class BotSentimentAnalyser:
         if not openai_api_key:
             raise ValueError("OPENAI_API_KEY must be set in environment or passed in")
         self.llm = OpenAI(model_name=self.model_name, openai_api_key=openai_api_key)
-        assert len(emotions) > 0
+        assert emotions
         self.emotions = [e.lower() for e in emotions]
         self.prompt = PromptTemplate(
             input_variables=["transcript"],

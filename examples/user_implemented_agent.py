@@ -17,9 +17,8 @@ class TestRESTfulAgent(RESTfulAgent):
         print(input, conversation_id)
         if "bye" in input:
             return RESTfulAgentEnd()
-        else:
-            spelt = "".join(i + j for i, j in zip(input, " " * len(input)))
-            return RESTfulAgentText(response=spelt)
+        spelt = "".join(i + j for i, j in zip(input, " " * len(input)))
+        return RESTfulAgentText(response=spelt)
 
 
 class TestWebSocketAgent(WebSocketAgent):
@@ -27,20 +26,17 @@ class TestWebSocketAgent(WebSocketAgent):
         print(input, conversation_id)
         if "bye" in input:
             return WebSocketAgentStopMessage()
-        else:
-            spelt = "".join(i + j for i, j in zip(input, " " * len(input)))
-            return WebSocketAgentTextMessage.from_text(spelt)
+        spelt = "".join(i + j for i, j in zip(input, " " * len(input)))
+        return WebSocketAgentTextMessage.from_text(spelt)
 
     async def generate_response(
         self, input: str, conversation_id: str
     ) -> AsyncGenerator[WebSocketAgentMessage, None]:
         print(input, conversation_id)
-        if "bye" in input:
-            yield WebSocketAgentTextEndMessage()
-        else:
+        if "bye" not in input:
             for word in input.split():
                 yield WebSocketAgentTextMessage.from_text(word)
-            yield WebSocketAgentTextEndMessage()
+        yield WebSocketAgentTextEndMessage()
 
 
 if __name__ == "__main__":

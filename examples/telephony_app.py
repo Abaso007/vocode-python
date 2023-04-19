@@ -48,7 +48,7 @@ class SpellerAgent(BaseAgent):
         is_interrupt: bool = False,
         conversation_id: Optional[str] = None,
     ) -> Tuple[Optional[str], bool]:
-        return "".join(c + " " for c in human_input), False
+        return "".join(f"{c} " for c in human_input), False
 
 
 class SpellerAgentFactory(AgentFactory):

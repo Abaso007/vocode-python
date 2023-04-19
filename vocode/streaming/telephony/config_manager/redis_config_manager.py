@@ -25,8 +25,7 @@ class RedisConfigManager(BaseConfigManager):
 
     def get_config(self, conversation_id) -> Optional[CallConfig]:
         self.logger.debug(f"Getting config for {conversation_id}")
-        raw_config = self.redis.get(conversation_id)
-        if raw_config:
+        if raw_config := self.redis.get(conversation_id):
             return CallConfig.parse_raw(self.redis.get(conversation_id))
 
     def delete_config(self, conversation_id):

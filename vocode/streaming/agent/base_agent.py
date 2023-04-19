@@ -42,11 +42,8 @@ class BaseAgent:
         pass
 
     def get_cut_off_response(self) -> Optional[str]:
-        assert isinstance(self.agent_config, LLMAgentConfig) or isinstance(
-            self.agent_config, ChatGPTAgentConfig
-        )
-        on_cut_off_messages = self.agent_config.cut_off_response.messages
-        if on_cut_off_messages:
+        assert isinstance(self.agent_config, (LLMAgentConfig, ChatGPTAgentConfig))
+        if on_cut_off_messages := self.agent_config.cut_off_response.messages:
             return random.choice(on_cut_off_messages).text
 
     def terminate(self):

@@ -21,12 +21,10 @@ def transcribe(whisper, params, ctx, audio_segment: AudioSegment) -> str:
         len(normalized),
     )
     if result != 0:
-        print("Error: {}".format(result))
+        print(f"Error: {result}")
         exit(1)
     text: str = whisper.whisper_full_get_segment_text(ctypes.c_void_p(ctx), 0).decode(
         "utf-8"
     )
     # heuristic to filter out non-speech
-    if not re.search(r"^\w.*", text.strip()):
-        return "", 0.0
-    return text, 1.0
+    return (text, 1.0) if re.search(r"^\w.*", text.strip()) else ("", 0.0)
