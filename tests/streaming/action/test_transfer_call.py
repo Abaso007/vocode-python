@@ -6,10 +6,10 @@ import aiohttp
 import pytest
 from aioresponses import aioresponses
 from pytest_mock import MockerFixture
-from tests.fakedata.id import generate_uuid
 
+from tests.fakedata.id import generate_uuid
 from vocode.streaming.action.transfer_call import (
-    TransferCallParameters,
+    TransferCallEmptyParameters,
     TransferCallVocodeActionConfig,
     TwilioTransferCall,
     VonageTransferCall,
@@ -95,7 +95,7 @@ async def test_twilio_transfer_call_succeeds(
     action_input = TwilioPhoneConversationActionInput(
         action_config=TransferCallVocodeActionConfig(phone_number=TRANSFER_PHONE_NUMBER),
         conversation_id=conversation_id,
-        params=TransferCallParameters(),
+        params=TransferCallEmptyParameters(),
         twilio_sid=twilio_sid,
         user_message_tracker=user_message_tracker,
     )
@@ -155,7 +155,7 @@ async def test_twilio_transfer_call_fails_if_interrupted(
     action_input = TwilioPhoneConversationActionInput(
         action_config=TransferCallVocodeActionConfig(phone_number=TRANSFER_PHONE_NUMBER),
         conversation_id=conversation_id,
-        params=TransferCallParameters(),
+        params=TransferCallEmptyParameters(),
         twilio_sid="twilio_sid",
         user_message_tracker=user_message_tracker,
     )
@@ -202,7 +202,7 @@ async def test_vonage_transfer_call_inbound(
         action_input = VonagePhoneConversationActionInput(
             action_config=TransferCallVocodeActionConfig(phone_number=transfer_phone_number),
             conversation_id=conversation_id,
-            params=TransferCallParameters(),
+            params=TransferCallEmptyParameters(),
             vonage_uuid=str(vonage_uuid),
             user_message_tracker=user_message_tracker,
         )

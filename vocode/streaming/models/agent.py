@@ -3,10 +3,11 @@ from typing import List, Literal, Optional, Union
 
 from pydantic.v1 import validator
 
-from .model import BaseModel, TypedModel
-from .vector_db import VectorDBConfig
 from vocode.streaming.models.actions import ActionConfig
 from vocode.streaming.models.message import BaseMessage
+
+from .model import BaseModel, TypedModel
+from .vector_db import VectorDBConfig
 
 FILLER_AUDIO_DEFAULT_SILENCE_THRESHOLD_SECONDS = 0.5
 LLM_AGENT_DEFAULT_TEMPERATURE = 1.0
@@ -30,6 +31,11 @@ OPENAI_GPT_4_1106_PREVIEW_MODEL_NAME = "gpt-4-1106-preview"
 ANTHROPIC_CLAUDE_3_HAIKU_MODEL_NAME = "claude-3-haiku-20240307"
 ANTHROPIC_CLAUDE_3_SONNET_MODEL_NAME = "claude-3-sonnet-20240229"
 ANTHROPIC_CLAUDE_3_OPUS_MODEL_NAME = "claude-3-opus-20240229"
+GROQ_DEFAULT_MODEL_NAME = "llama3-70b-8192"
+GROQ_LLAMA3_8B_MODEL_NAME = "llama3-8b-8192"
+GROQ_LLAMA3_70B_MODEL_NAME = "llama3-70b-8192"
+GROQ_MIXTRAL_8X7B_MODEL_NAME = "mixtral-8x7b-32768"
+GROQ_GEMMA_7B_MODEL_NAME = "gemma-7b-it"
 
 InterruptSensitivity = Literal["low", "high"]
 
@@ -44,10 +50,12 @@ class AgentType(str, Enum):
     ECHO = "agent_echo"
     GPT4ALL = "agent_gpt4all"
     LLAMACPP = "agent_llamacpp"
+    GROQ = "agent_groq"
     INFORMATION_RETRIEVAL = "agent_information_retrieval"
     RESTFUL_USER_IMPLEMENTED = "agent_restful_user_implemented"
     WEBSOCKET_USER_IMPLEMENTED = "agent_websocket_user_implemented"
     ACTION = "agent_action"
+    LANGCHAIN = "agent_langchain"
 
 
 class FillerAudioConfig(BaseModel):
@@ -132,10 +140,31 @@ class AnthropicAgentConfig(AgentConfig, type=AgentType.ANTHROPIC.value):  # type
     temperature: float = LLM_AGENT_DEFAULT_TEMPERATURE
 
 
+class LangchainAgentConfig(AgentConfig, type=AgentType.LANGCHAIN.value):  # type: ignore
+    prompt_preamble: str
+    model_name: str
+    provider: str
+    temperature: float = LLM_AGENT_DEFAULT_TEMPERATURE
+    max_tokens: int = LLM_AGENT_DEFAULT_MAX_TOKENS
+
+
 class ChatVertexAIAgentConfig(AgentConfig, type=AgentType.CHAT_VERTEX_AI.value):  # type: ignore
     prompt_preamble: str
     model_name: str = CHAT_VERTEX_AI_DEFAULT_MODEL_NAME
     generate_responses: bool = False  # Google Vertex AI doesn't support streaming
+
+
+class GroqAgentConfig(AgentConfig, type=AgentType.GROQ.value):  # type: ignore
+    groq_api_key: Optional[str] = None
+    prompt_preamble: str
+    model_name: str = GROQ_DEFAULT_MODEL_NAME
+    temperature: float = LLM_AGENT_DEFAULT_TEMPERATURE
+    max_tokens: int = LLM_AGENT_DEFAULT_MAX_TOKENS
+    vector_db_config: Optional[VectorDBConfig] = None
+    # TODO: the below fields should moved up to AgentConfig, and their logic should live in BaseAgent
+    use_backchannels: bool = False
+    backchannel_probability: float = 0.7
+    first_response_filler_message: Optional[str] = None
 
 
 class InformationRetrievalAgentConfig(
